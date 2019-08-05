@@ -5,14 +5,15 @@ const mongoose = require('mongoose');
 const Post = require('./models/post');
 
 const app = express();
-
-mongoose.connect('mongodb+srv://medbelabes:MALdb4nugRJ87H0T@cluster0-nyynt.mongodb.net/mean-app?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://mohpixou:MG13FeiaszIOOLzh@cluster0-rsown.mongodb.net/test?retryWrites=true&w=majority')
   .then(() => {
     console.log("Connected to database!");
   })
   .catch(() => {
     console.log("Connection failed!");
   });
+
+//MG13FeiaszIOOLzh
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -35,10 +36,13 @@ app.post("/api/posts", (req, res, next) => {
     title: req.body.title,
     content: req.body.content
   });
-  post.save();
-  res.status(201).json({
-    message: 'Post added successfully!'
+  post.save().then(createdPost => {
+    res.status(201).json({
+      message: 'Post added successfully!',
+      postId: createdPost._id
+    });
   });
+
 });
 
 app.get('/api/posts', (req, res, next) => {
@@ -47,6 +51,13 @@ app.get('/api/posts', (req, res, next) => {
       message: 'Posts fetched succesfylly!',
       posts: documents
     });
+  });
+});
+
+app.delete('/api/posts/:id', (req, res, next) => {
+  Post.deleteOne({_id: req.params.id}).then(result => {
+    console.log(result);
+    res.status(200).json({message: 'Post deleted!'});
   });
 });
 
